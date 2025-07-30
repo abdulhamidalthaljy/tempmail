@@ -193,6 +193,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private emailService: EmailService) {}
 
   ngOnInit(): void {
+    // Check for expired email on init
+    this.emailService.checkAndCleanupExpiredEmail();
+
     // Subscribe to current email changes
     this.emailService.currentEmail$.subscribe((email) => {
       this.currentEmail = email;
@@ -318,6 +321,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       if (this.timeRemaining.expired) {
         this.stopCountdown();
+        // Clear expired email
+        this.emailService.clearCurrentEmail();
       }
     }
   }

@@ -25,14 +25,117 @@ import { environment } from '../../environments/environment';
 })
 export class EmailService {
   private readonly API_URL = environment.apiUrl;
-  private currentEmailSubject = new BehaviorSubject<TempEmail | null>(null);
-  private messagesSubject = new BehaviorSubject<EmailMessage[]>([]);
+  private readonly STORAGE_KEY = 'tempmail_current_email';
+  private readonly MESSAGES_KEY = 'tempmail_messages';
+
+  private currentEmailSubject = new BehaviorSubject<TempEmail | null>(
+    this.loadEmailFromStorage()
+  );
+  private messagesSubject = new BehaviorSubject<EmailMessage[]>(
+    this.loadMessagesFromStorage()
+  );
   private autoRefreshSubscription: any;
 
   public currentEmail$ = this.currentEmailSubject.asObservable();
   public messages$ = this.messagesSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Auto-start refresh if there's a saved email that hasn't expired
+    const savedEmail = this.loadEmailFromStorage();
+    if (savedEmail && !this.isEmailExpired(savedEmail)) {
+      this.startAutoRefresh(savedEmail.address);
+    }
+  }
+
+  /**
+   * Load email from localStorage
+   */
+  private loadEmailFromStorage(): TempEmail | null {
+    try {
+      const saved = localStorage.getItem(this.STORAGE_KEY);
+      if (saved) {
+        const email = JSON.parse(saved);
+        // Convert string dates back to Date objects
+        email.createdAt = new Date(email.createdAt);
+        email.expiresAt = new Date(email.expiresAt);
+
+        // Check if email has expired
+        if (this.isEmailExpired(email)) {
+          this.clearStorage();
+          return null;
+        }
+
+        return email;
+      }
+    } catch (error) {
+      console.error('Error loading email from storage:', error);
+      this.clearStorage();
+    }
+    return null;
+  }
+
+  /**
+   * Load messages from localStorage
+   */
+  private loadMessagesFromStorage(): EmailMessage[] {
+    try {
+      const saved = localStorage.getItem(this.MESSAGES_KEY);
+      if (saved) {
+        const messages = JSON.parse(saved);
+        // Convert string dates back to Date objects
+        return messages.map((msg: any) => ({
+          ...msg,
+          receivedAt: new Date(msg.receivedAt),
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading messages from storage:', error);
+    }
+    return [];
+  }
+
+  /**
+   * Save email to localStorage
+   */
+  private setCurrentEmail(email: TempEmail): void {
+    this.currentEmailSubject.next(email);
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(email));
+    } catch (error) {
+      console.error('Error saving email to storage:', error);
+    }
+  }
+
+  /**
+   * Save messages to localStorage
+   */
+  private setMessages(messages: EmailMessage[]): void {
+    this.messagesSubject.next(messages);
+    try {
+      localStorage.setItem(this.MESSAGES_KEY, JSON.stringify(messages));
+    } catch (error) {
+      console.error('Error saving messages to storage:', error);
+    }
+  }
+
+  /**
+   * Check if email has expired
+   */
+  private isEmailExpired(email: TempEmail): boolean {
+    return new Date() > email.expiresAt;
+  }
+
+  /**
+   * Clear all localStorage data
+   */
+  private clearStorage(): void {
+    try {
+      localStorage.removeItem(this.STORAGE_KEY);
+      localStorage.removeItem(this.MESSAGES_KEY);
+    } catch (error) {
+      console.error('Error clearing storage:', error);
+    }
+  }
 
   /**
    * Generate a new temporary email address
@@ -57,7 +160,7 @@ export class EmailService {
               expiresAt: new Date(response.data.expiresAt),
             };
             console.log('✅ Email generated successfully:', email);
-            this.currentEmailSubject.next(email);
+            this.setCurrentEmail(email);
             this.startAutoRefresh(email.address);
             return email;
           }
@@ -85,7 +188,7 @@ export class EmailService {
               ...msg,
               receivedAt: new Date(msg.receivedAt),
             }));
-            this.messagesSubject.next(messages);
+            this.setMessages(messages);
             return messages;
           }
           throw new Error(response.error || 'Failed to fetch messages');
@@ -348,6 +451,28 @@ export class EmailService {
     this.stopAutoRefresh();
     this.currentEmailSubject.complete();
     this.messagesSubject.complete();
+    this.clearStorage();
+  }
+
+  /**
+   * Clear current email and messages (when email expires)
+   */
+  clearCurrentEmail(): void {
+    this.stopAutoRefresh();
+    this.currentEmailSubject.next(null);
+    this.messagesSubject.next([]);
+    this.clearStorage();
+  }
+
+  /**
+   * Check if current email has expired and clear if needed
+   */
+  checkAndCleanupExpiredEmail(): void {
+    const currentEmail = this.getCurrentEmail();
+    if (currentEmail && this.isEmailExpired(currentEmail)) {
+      console.log('🕐 Email has expired, clearing data');
+      this.clearCurrentEmail();
+    }
   }
 
   /**
