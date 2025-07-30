@@ -143,15 +143,9 @@ export class EmailService {
   generateTempEmail(
     request: CreateTempEmailRequest = {}
   ): Observable<TempEmail> {
-    console.log('🚀 Generating temp email with API URL:', this.API_URL);
-    console.log('📤 Request data:', request);
-
     return this.http
       .post<CreateTempEmailResponse>(`${this.API_URL}/email/new`, request)
       .pipe(
-        tap((response) => {
-          console.log('📨 API Response:', response);
-        }),
         map((response) => {
           if (response.success) {
             const email = {
@@ -159,17 +153,13 @@ export class EmailService {
               createdAt: new Date(response.data.createdAt),
               expiresAt: new Date(response.data.expiresAt),
             };
-            console.log('✅ Email generated successfully:', email);
             this.setCurrentEmail(email);
             this.startAutoRefresh(email.address);
             return email;
           }
           throw new Error(response.error || 'Failed to generate email');
         }),
-        catchError((error) => {
-          console.error('❌ Email generation failed:', error);
-          return this.handleError(error);
-        })
+        catchError(this.handleError)
       );
   }
 
@@ -470,7 +460,6 @@ export class EmailService {
   checkAndCleanupExpiredEmail(): void {
     const currentEmail = this.getCurrentEmail();
     if (currentEmail && this.isEmailExpired(currentEmail)) {
-      console.log('🕐 Email has expired, clearing data');
       this.clearCurrentEmail();
     }
   }

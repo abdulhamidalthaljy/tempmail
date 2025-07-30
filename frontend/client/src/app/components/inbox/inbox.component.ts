@@ -454,7 +454,6 @@ export class InboxComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          console.log('Reply sent successfully:', response);
           this.cancelReply();
           this.isProcessingSMTP = false;
           // You could show a success message here
@@ -480,7 +479,6 @@ export class InboxComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          console.log('Message forwarded successfully:', response);
           this.cancelForward();
           this.isProcessingSMTP = false;
           // You could show a success message here
