@@ -18,12 +18,13 @@ import {
   GetMessagesResponse,
   GetMessageResponse,
 } from '../models/email-message.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EmailService {
-  private readonly API_URL = 'http://localhost:3000/api';
+  private readonly API_URL = environment.apiUrl;
   private currentEmailSubject = new BehaviorSubject<TempEmail | null>(null);
   private messagesSubject = new BehaviorSubject<EmailMessage[]>([]);
   private autoRefreshSubscription: any;
