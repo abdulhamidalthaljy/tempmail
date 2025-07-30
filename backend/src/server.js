@@ -105,11 +105,11 @@ app.use(errorHandler);
 
 // MongoDB connection
 const connectDB = async () => {
-    try {
-        const mongoUri = process.env.NODE_ENV === 'test'
-            ? process.env.MONGODB_TEST_URI
-            : process.env.MONGODB_URI || 'mongodb://localhost:27017/tempmail';
+    const mongoUri = process.env.NODE_ENV === 'test'
+        ? process.env.MONGODB_TEST_URI
+        : process.env.MONGODB_URI || 'mongodb://localhost:27017/tempmail';
 
+    try {
         console.log('🔌 Attempting to connect to MongoDB...');
         console.log('📍 Connection URI:', mongoUri.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@'));
 
@@ -118,7 +118,7 @@ const connectDB = async () => {
             socketTimeoutMS: 45000,
         });
 
-        console.log(`✅ MongoDB connected successfully: ${mongoUri}`);
+        console.log(`✅ MongoDB connected successfully`);
     } catch (error) {
         console.error('❌ MongoDB connection error:', error.message);
 
