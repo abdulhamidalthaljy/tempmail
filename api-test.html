@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TempMail API Test</title>
+  </head>
+  <body>
+    <h1>TempMail API Connection Test</h1>
+    <button onclick="testAPI()">Test API Connection</button>
+    <div id="results"></div>
+
+    <script>
+      async function testAPI() {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = "<p>Testing API connection...</p>";
+
+        try {
+          // Test health endpoint first
+          console.log("Testing health endpoint...");
+          const healthResponse = await fetch(
+            "https://tempmail-production-740f.up.railway.app/health"
+          );
+          const healthData = await healthResponse.json();
+          console.log("Health check:", healthData);
+
+          // Test email generation
+          console.log("Testing email generation...");
+          const emailResponse = await fetch(
+            "https://tempmail-production-740f.up.railway.app/api/email/new",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({}),
+            }
+          );
+
+          console.log("Response status:", emailResponse.status);
+          console.log("Response headers:", [
+            ...emailResponse.headers.entries(),
+          ]);
+
+          const emailData = await emailResponse.json();
+          console.log("Email generation response:", emailData);
+
+          resultsDiv.innerHTML = `
+                    <h3>✅ API Connection Successful!</h3>
+                    <p><strong>Health Check:</strong> ${JSON.stringify(
+                      healthData
+                    )}</p>
+                    <p><strong>Generated Email:</strong> ${
+                      emailData.success ? emailData.data.address : "Failed"
+                    }</p>
+                    <p><strong>Response Status:</strong> ${
+                      emailResponse.status
+                    }</p>
+                `;
+        } catch (error) {
+          console.error("API Test Error:", error);
+          resultsDiv.innerHTML = `
+                    <h3>❌ API Connection Failed!</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Check browser console for details</strong></p>
+                `;
+        }
+      }
+    </script>
+  </body>
+</html>

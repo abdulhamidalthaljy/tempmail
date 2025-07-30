@@ -32,17 +32,16 @@ const corsOptions = {
     origin: [
         process.env.FRONTEND_URL || 'http://localhost:4200',
         'http://localhost:3000',
+        'https://tempmail-xi.vercel.app',  // Specific Vercel domain
         /\.railway\.app$/,  // Allow all Railway domains
         /\.vercel\.app$/,   // Allow Vercel domains
         /\.netlify\.app$/   // Allow Netlify domains
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true
 };
-app.use(cors(corsOptions));
-
-// Rate limiting
+app.use(cors(corsOptions));// Rate limiting
 const limiter = rateLimit({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
     max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
