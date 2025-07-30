@@ -4,8 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --configuration production",
-    "build:vercel": "ng build --configuration production --output-path dist/client/browser",
+    "build": "ng build --configuration production --output-mode static",
+    "build:vercel": "ng build --configuration production --output-mode static",
+    "build:ssr": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:client": "node dist/client/server/server.mjs"

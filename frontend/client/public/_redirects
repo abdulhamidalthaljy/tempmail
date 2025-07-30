@@ -1,0 +1,5 @@
+# This file is for Vercel to properly serve the Angular SPA
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
