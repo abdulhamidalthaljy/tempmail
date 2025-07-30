@@ -1,0 +1,30 @@
+{
+  "name": "tempmail",
+  "version": "1.0.0",
+  "description": "TempMail - Temporary Email Service",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "start": "cd backend && node src/server.js",
+    "build": "cd backend && npm ci --only=production",
+    "dev": "cd backend && npm run dev"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "tempmail",
+    "disposable-email",
+    "temporary-email",
+    "nodejs",
+    "express",
+    "mongodb",
+    "mailgun"
+  ],
+  "author": "abdulhamidalthaljy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abdulhamidalthaljy/tempmail.git"
+  }
+}

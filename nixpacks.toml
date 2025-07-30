@@ -1,11 +1,8 @@
-[providers]
-node = "18"
+[phases.build]
+cmd = "cd backend && npm install --production"
+
+[phases.start]
+cmd = "cd backend && node src/server.js"
 
 [variables]
 NODE_ENV = "production"
-
-[build]
-cmd = "cd backend && npm ci --only=production"
-
-[start]
-cmd = "cd backend && node src/server.js"
