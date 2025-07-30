@@ -31,7 +31,10 @@ app.use(helmet({
 const corsOptions = {
     origin: [
         process.env.FRONTEND_URL || 'http://localhost:4200',
-        'http://localhost:3000'
+        'http://localhost:3000',
+        /\.railway\.app$/,  // Allow all Railway domains
+        /\.vercel\.app$/,   // Allow Vercel domains
+        /\.netlify\.app$/   // Allow Netlify domains
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],

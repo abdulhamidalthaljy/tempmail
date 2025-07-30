@@ -1,6 +1,103 @@
 # TempMail Clone - Disposable Email Service
 
-A complete disposable email service with Angular frontend and Node.js backend, featuring temporary email generation, message storage, and mock email testing capabilities.
+# 📧 TempMail - Temporary Email Service
+
+A fully functional temporary email service similar to Mohmal and TempMail, built with Angular, Node.js, MongoDB, and Mailgun integration for real email receiving.
+
+## 🌟 Features
+
+- ✅ **Real Email Receiving** - Receive actual emails from any email provider
+- ✅ **Temporary Email Generation** - Generate disposable email addresses
+- ✅ **Real-time Inbox** - View emails as they arrive with auto-refresh
+- ✅ **Email Management** - Read, reply, and forward emails
+- ✅ **SMTP Integration** - Send emails via Gmail and Mailgun SMTP
+- ✅ **Auto Cleanup** - Automatic cleanup of expired emails
+- ✅ **Professional UI** - Modern interface with Bootstrap 5
+- ✅ **MongoDB Storage** - Persistent storage with MongoDB Atlas
+- ✅ **Webhook Support** - Real-time email receiving via Mailgun webhooks
+
+## 🏗️ Architecture
+
+### Frontend (Angular 17)
+
+- **Framework**: Angular 17 with standalone components
+- **Styling**: Bootstrap 5
+- **Features**: Real-time email updates, responsive design
+- **Location**: `frontend/client/`
+
+### Backend (Node.js/Express)
+
+- **Framework**: Express.js with TypeScript support
+- **Database**: MongoDB with Mongoose ODM
+- **Email Services**: Mailgun API and SMTP, Gmail SMTP
+- **Features**: RESTful API, webhook endpoints, rate limiting
+- **Location**: `backend/`
+
+### Database (MongoDB Atlas)
+
+- **Models**: TempEmail, EmailMessage
+- **Features**: Auto-expiration, indexing, validation
+
+## 🚀 Quick Start
+
+### Local Development
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/abdulhamidalthaljy/tempmail.git
+   cd tempmail
+   ```
+
+2. **Set up Backend**:
+
+   ```bash
+   cd backend
+   npm install
+   cp .env.example .env
+   # Edit .env with your configuration
+   npm start
+   ```
+
+3. **Set up Frontend**:
+
+   ```bash
+   cd frontend/client
+   npm install
+   ng serve
+   ```
+
+4. **Access the application**:
+   - Frontend: http://localhost:4200
+   - Backend API: http://localhost:3000
+
+### Production Deployment (Railway)
+
+See [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) for detailed deployment instructions.
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the backend directory with:
+
+```env
+# MongoDB
+MONGODB_URI=your_mongodb_connection_string
+
+# Mailgun
+MAILGUN_API_KEY=your_mailgun_api_key
+MAILGUN_DOMAIN=your_mailgun_domain
+
+# Gmail SMTP
+GMAIL_USER=your_gmail_address
+GMAIL_APP_PASSWORD=your_gmail_app_password
+
+# Security
+JWT_SECRET=your_jwt_secret
+```
+
+See `backend/.env.example` for complete configuration options.
 
 ## 🚀 Features
 
